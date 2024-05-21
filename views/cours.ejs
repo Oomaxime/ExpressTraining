@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TP_Express</title>
+    <link rel="shortcut icon" href="#" />
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/home"><img id="logo" src="/hetic.jpg" alt="" /></a>
+        <div id="link">
+          <a href="/pictures">Télécharger une image !</a>
+          <a href="/about">About</a>
+          <a href="/subscribe">Inscription</a> 
+      </nav>
+    </header>
+    <main>
+      <section>
+        <h1><%= title %></h1>
+        <p><%= description %></p>
+      </section>
+      <section>
+        <h2>Enseignants</h2>
+        <ul>
+          <% teachers.forEach(teacher => { %>
+          <li><%= teacher %></li>
+          <% }) %>
+        </ul>
+      </section>
+      <footer>Contact: <%= teachers[0] %></footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TP_Express</title>
+    <link rel="shortcut icon" href="#" />
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/home"><img id="logo" src="/hetic.jpg" alt="" /></a>
+        <div id="link">
+          <a href="/pictures">Télécharger une image !</a>
+          <a href="/about">About</a>
+          <a href="/subscribe">Inscription</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <h1>Formulaire d'inscription</h1>
+      <form action="http://localhost:8080/register" method="POST">
+        <label for="firstName">Prénom:</label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          required
+        /><br /><br />
+
+        <label for="lastName">Nom:</label>
+        <input type="text" id="lastName" name="lastName" required /><br /><br />
+
+        <label for="username">Login:</label>
+        <input type="text" id="username" name="username" required /><br /><br />
+
+        <label for="password">Mot de passe:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+        /><br /><br />
+
+        <label for="confirmPassword">Confirmation du mot de passe:</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          required
+        /><br /><br />
+
+        <button type="submit">S'inscrire</button>
+      </form>
+    </main>
+  </body>
+</html>
