@@ -12,29 +12,17 @@
       <nav>
         <a href="/home"><img id="logo" src="/hetic.jpg" alt="" /></a>
         <div id="link">
-          <a href="/pictures">Télécharger une image !</a>
-          <a href="/about">About</a>
-          <a href="/subscribe">Inscription</a>
+          <a href="">Connexion</a>
         </div>
       </nav>
     </header>
     <main>
       <h1>Formulaire d'inscription</h1>
       <form action="http://localhost:8080/register" method="POST">
-        <label for="firstName">Prénom:</label>
-        <input
-          type="text"
-          id="firstName"
-          name="firstName"
-          required
-        /><br /><br />
-
-        <label for="lastName">Nom:</label>
-        <input type="text" id="lastName" name="lastName" required /><br /><br />
-
-        <label for="username">Login:</label>
+        <label for="username">Username:</label>
         <input type="text" id="username" name="username" required /><br /><br />
-
+        <label for="email">email:</label>
+        <input type="email" id="email" name="email" required /><br /><br />
         <label for="password">Mot de passe:</label>
         <input
           type="password"

@@ -2,13 +2,35 @@ const express = require("express");
 const path = require("path");
 const favicon = require("serve-favicon");
 const bodyParser = require("body-parser");
+const session = require("express-session");
 const app = express();
 const port = 8080;
+
+app.use(
+  session({
+    secret: "your_secret_key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+const mongoose = require("mongoose");
+mongoose.connect(
+  "mongodb+srv://maximebidan33:1234@clusterhetic.e85hlxq.mongodb.net/DBLP"
+);
+
+const db = mongoose.connection;
+
+db.on("error", console.log.bind(console, "connection error"));
+db.once("open", function (callback) {
+  console.log("connection succeeded");
+});
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(express.static(__dirname + "/public"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -16,33 +38,65 @@ app.set("view engine", "ejs");
 app.get("/subscribe", (req, res) => {
   res.render("inscription");
 });
+//LOGIN
 
-//EXO FORMULAIRE
-const users = [];
+app.post("/login", function (req, res) {
+  const username = req.body.username;
+  const pass = req.body.password;
 
-app.post("/register", (req, res) => {
-  const { firstName, lastName, username, password, confirmPassword } = req.body;
-  if (password !== confirmPassword) {
-    return res.send(`
-      <p>Les mots de passe ne correspondent pas. Veuillez réessayer.</p>
-      <a href="/">Retour au formulaire</a>
-    `);
-  }
-  const existingUser = users.find(
-    (user) => user.firstName === firstName && user.lastName === lastName
+  db.collection("users").findOne(
+    { username: username, password: pass },
+    function (err, user) {
+      if (err) {
+        return res.status(500).send("Database error");
+      }
+
+      if (!user) {
+        return res
+          .status(401)
+          .send("Nom d'utilisateur ou mot de passe incorrect");
+      }
+      req.session.user = user;
+      res.redirect("/home");
+    }
   );
+});
 
-  if (existingUser) {
-    existingUser.username = username;
-    existingUser.password = password;
-    return res.send(`
-      <p>Bonjour ${firstName} ${lastName}, tes informations ont été mises à jour.</p>
-    `);
+//INSCRIPTION
+app.post("/register", function (req, res) {
+  const username = req.body.username;
+  const email = req.body.email;
+  const pass = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+
+  if (pass !== confirmPassword) {
+    return res.send("les mot de passe ne corresponde pas");
   }
-  users.push({ firstName, lastName, username, password });
-  res.send(`
-    <p>Bonjour ${firstName} ${lastName}, ton compte est bien créé.</p>
-  `);
+
+  db.collection("users").findOne({ username: username }, function (err, user) {
+    if (err) {
+      return res.status(500).send("Database error");
+    }
+
+    if (user) {
+      return res.redirect("/subscribe");
+    }
+
+    const data = {
+      username: username,
+      email: email,
+      password: pass,
+    };
+
+    db.collection("users").insertOne(data, function (err, collection) {
+      if (err) {
+        return res.status(500).send("Error inserting record");
+      }
+
+      console.log("Record inserted Successfully");
+      return res.render("index");
+    });
+  });
 });
 
 //EXO COURS
@@ -74,10 +128,15 @@ app.use((req, res, next) => {
 
 // PAGE D'ACCEUIL
 app.get("", (req, res) => {
-  res.render("index");
+  res.render("login");
 });
+
 app.get("/home", (req, res) => {
-  res.render("index");
+  if (req.session.user) {
+    res.render("index", { user: req.session.user });
+  } else {
+    res.redirect("/");
+  }
 });
 
 // TEMPLATE DE COURS AVEC EJS
@@ -124,7 +183,6 @@ app.get("/about", (req, res) => {
 });
 
 app.use((req, res) => {
-  console.log("Abort v2");
   res.status(400).send("Erreur : Requête non valide");
 });
 
